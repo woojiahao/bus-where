@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun SearchScreen(modifier: Modifier) {
+fun SearchScreen(uiState: BusWhereUiState, modifier: Modifier) {
   Box(
     modifier = Modifier.fillMaxSize(),
     contentAlignment = Alignment.Center

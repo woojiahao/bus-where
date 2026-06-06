@@ -55,7 +55,7 @@ fun AppNavHost(
     Destination.entries.forEach { destination ->
       composable(destination.route) {
         when (destination) {
-          Destination.SEARCH -> SearchScreen(modifier)
+          Destination.SEARCH -> SearchScreen(viewModel.uiState, modifier)
           Destination.FAVORITES -> FavoritesScreen(modifier)
           Destination.ROUTES -> RoutesScreen(viewModel.uiState, modifier)
         }
