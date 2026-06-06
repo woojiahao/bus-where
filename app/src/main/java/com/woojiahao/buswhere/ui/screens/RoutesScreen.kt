@@ -15,7 +15,13 @@ fun RoutesScreen(
 ) {
     when (busWhereUiState) {
         is BusWhereUiState.Error -> ErrorScreen(modifier = modifier.fillMaxSize())
-        is BusWhereUiState.Success -> ResultScreen(busWhereUiState.services.size.toString(), modifier.fillMaxWidth())
+        is BusWhereUiState.Success -> ResultScreen(
+            busWhereUiState.bundle.services.joinToString("\n") {
+                "${it.key.serviceNo} going ${it.key.direction} has ${it.stops.size} stops"
+            },
+            modifier.fillMaxWidth()
+        )
+
         is BusWhereUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
     }
 }

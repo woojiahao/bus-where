@@ -1,4 +1,4 @@
-package com.woojiahao.buswhere.network
+package com.woojiahao.buswhere.network.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

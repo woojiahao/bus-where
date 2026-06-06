@@ -57,7 +57,7 @@ fun AppNavHost(
                 when (destination) {
                     Destination.SEARCH-> SearchScreen(modifier)
                     Destination.FAVORITES-> FavoritesScreen(modifier)
-                    Destination.ROUTES -> RoutesScreen(viewModel.busWhereUiState, modifier)
+                    Destination.ROUTES -> RoutesScreen(viewModel.uiState, modifier)
                 }
             }
         }
