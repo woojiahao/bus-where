@@ -12,16 +12,16 @@ import com.woojiahao.buswhere.ui.BusWhereApp
 import com.woojiahao.buswhere.ui.theme.BusWhereTheme
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            BusWhereTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    BusWhereApp(modifier = Modifier.padding(innerPadding))
-                }
-            }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    enableEdgeToEdge()
+    setContent {
+      BusWhereTheme {
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+          BusWhereApp(modifier = Modifier.padding(innerPadding))
         }
+      }
     }
+  }
 }
 

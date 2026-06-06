@@ -30,70 +30,76 @@ import com.woojiahao.buswhere.ui.screens.RoutesScreen
 import com.woojiahao.buswhere.ui.screens.SearchScreen
 
 enum class Destination(
-    val route: String,
-    val label: String,
-    val icon: ImageVector,
-    val contentDescription: String
+  val route: String,
+  val label: String,
+  val icon: ImageVector,
+  val contentDescription: String
 ) {
-    SEARCH("search", "Search", Icons.Default.Search, "Search"),
-    FAVORITES("favorites", "Favorites", Icons.Default.FavoriteBorder, "Favorites"),
-    ROUTES("routes", "Routes", Icons.Default.Place, "Routes")
+  SEARCH("search", "Search", Icons.Default.Search, "Search"),
+  FAVORITES("favorites", "Favorites", Icons.Default.FavoriteBorder, "Favorites"),
+  ROUTES("routes", "Routes", Icons.Default.Place, "Routes")
 }
 
 
 @Composable
 fun AppNavHost(
-    viewModel: BusWhereViewModel,
-    navController: NavHostController,
-    startDestination: Destination,
-    modifier: Modifier = Modifier
+  viewModel: BusWhereViewModel,
+  navController: NavHostController,
+  startDestination: Destination,
+  modifier: Modifier = Modifier
 ) {
-    NavHost(
-        navController,
-        startDestination = startDestination.route
-    ) {
-        Destination.entries.forEach { destination ->
-            composable(destination.route) {
-                when (destination) {
-                    Destination.SEARCH-> SearchScreen(modifier)
-                    Destination.FAVORITES-> FavoritesScreen(modifier)
-                    Destination.ROUTES -> RoutesScreen(viewModel.uiState, modifier)
-                }
-            }
+  NavHost(
+    navController,
+    startDestination = startDestination.route
+  ) {
+    Destination.entries.forEach { destination ->
+      composable(destination.route) {
+        when (destination) {
+          Destination.SEARCH -> SearchScreen(modifier)
+          Destination.FAVORITES -> FavoritesScreen(modifier)
+          Destination.ROUTES -> RoutesScreen(viewModel.uiState, modifier)
         }
+      }
     }
+  }
 }
+
 @Preview()
 @Composable
 fun BusWhereApp(modifier: Modifier = Modifier) {
-    val navController = rememberNavController()
-    val startDestination = Destination.FAVORITES
-    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+  val navController = rememberNavController()
+  val startDestination = Destination.FAVORITES
+  var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
-    Scaffold(
-        modifier = modifier,
-        bottomBar = {
-            NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
-                Destination.entries.forEachIndexed { index, destination ->
-                    NavigationBarItem(
-                        selected = selectedDestination == index,
-                        onClick = {
-                            navController.navigate(route = destination.route)
-                            selectedDestination = index
-                        },
-                        icon = {
-                            Icon(
-                                destination.icon,
-                                contentDescription = destination.contentDescription
-                            )
-                        },
-                        label = { Text(destination.label) }
-                    )
-                }
-            }
+  Scaffold(
+    modifier = modifier,
+    bottomBar = {
+      NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
+        Destination.entries.forEachIndexed { index, destination ->
+          NavigationBarItem(
+            selected = selectedDestination == index,
+            onClick = {
+              navController.navigate(route = destination.route)
+              selectedDestination = index
+            },
+            icon = {
+              Icon(
+                destination.icon,
+                contentDescription = destination.contentDescription
+              )
+            },
+            label = { Text(destination.label) }
+          )
         }
-    ) { contentPadding ->
-        val busWhereViewModel: BusWhereViewModel = viewModel()
-        AppNavHost(busWhereViewModel, navController, startDestination, modifier = Modifier.padding(contentPadding))
+      }
     }
+  ) { contentPadding ->
+    val busWhereViewModel: BusWhereViewModel = viewModel()
+    AppNavHost(
+      busWhereViewModel,
+      navController,
+      startDestination,
+      modifier = Modifier.padding(contentPadding)
+    )
+  }
 }

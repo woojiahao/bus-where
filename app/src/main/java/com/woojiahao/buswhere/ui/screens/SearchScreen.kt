@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun SearchScreen(modifier: Modifier) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Search")
-    }
+  Box(
+    modifier = Modifier.fillMaxSize(),
+    contentAlignment = Alignment.Center
+  ) {
+    Text("Search")
+  }
 }
 
