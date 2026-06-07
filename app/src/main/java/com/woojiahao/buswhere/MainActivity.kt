@@ -18,7 +18,10 @@ class MainActivity : ComponentActivity() {
     setContent {
       BusWhereTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          BusWhereApp(modifier = Modifier.padding(innerPadding))
+          BusWhereApp(
+            context = applicationContext,
+            modifier = Modifier.padding(innerPadding)
+          )
         }
       }
     }

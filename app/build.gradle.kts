@@ -56,6 +56,8 @@ dependencies {
   implementation(libs.kotlinx.serialization.json)
 
   implementation(libs.androidx.compose.runtime)
+  implementation(libs.androidx.datastore.preferences)
+  implementation(libs.androidx.compose.material.icons.extended)
 
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)

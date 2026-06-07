@@ -1,4 +1,4 @@
-package com.woojiahao.buswhere.network.models
+package com.woojiahao.buswhere.data.api.dtos
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,7 +6,7 @@ import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
 @Serializable
 @JsonIgnoreUnknownKeys
-data class BusWhereService(
+data class BusWhereApiServiceDto(
   val category: String,
   val operator: String,
   val direction: Int,

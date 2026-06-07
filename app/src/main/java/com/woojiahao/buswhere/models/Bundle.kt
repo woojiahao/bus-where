@@ -1,4 +1,4 @@
-package com.woojiahao.buswhere.data
+package com.woojiahao.buswhere.models
 
 data class Bundle(
   val services: List<Service> = emptyList(),
