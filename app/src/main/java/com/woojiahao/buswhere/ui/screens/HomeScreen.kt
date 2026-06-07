@@ -3,9 +3,7 @@ package com.woojiahao.buswhere.ui.screens
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,27 +25,29 @@ fun HomeScreen(
 ) {
   val state by vm.uiState.collectAsStateWithLifecycle()
 
-  Scaffold { paddingValues ->
-    Column(modifier = modifier.fillMaxSize().padding(paddingValues)) {
-      BusStopSearchBar(
-        query = state.searchQuery,
-        onQueryChange = vm::onSearchChange,
-        enabled = state.dataState is BusWhereDataState.Success,
-        modifier = modifier
-      )
+  Column(modifier = modifier.fillMaxSize()) {
+    BusStopSearchBar(
+      query = state.searchQuery,
+      onQueryChange = vm::onSearchChange,
+      enabled = state.dataState is BusWhereDataState.Success,
+    )
 
-      when (state.dataState) {
-        BusWhereDataState.Error -> ErrorState(onRetry = vm::refresh)
-        BusWhereDataState.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-          CircularProgressIndicator()
-        }
-
-        is BusWhereDataState.Success -> BusStopList(
-          filteredFavorites = state.filteredFavorites,
-          filteredOthers = state.filteredOthers,
-          onToggleFavorite = vm::toggleFavorite
-        )
+    when (state.dataState) {
+      BusWhereDataState.Error -> ErrorState(onRetry = vm::refresh)
+      BusWhereDataState.Loading -> Box(
+        Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+      ) {
+        CircularProgressIndicator()
       }
+
+      is BusWhereDataState.Success -> BusStopList(
+        filteredFavorites = state.filteredFavorites,
+        filteredOthers = state.filteredOthers,
+        arrivalState = state.arrivalState,
+        onToggleFavorite = vm::toggleFavorite,
+        onFetchArrivals = vm::fetchArrivals
+      )
     }
   }
 }

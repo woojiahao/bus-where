@@ -54,6 +54,8 @@ dependencies {
   implementation(libs.retrofit2.kotlinx.serialization.converter)
   implementation(libs.okhttp)
   implementation(libs.kotlinx.serialization.json)
+  implementation(libs.kotlinx.datetime)
+  implementation(libs.logging.interceptor)
 
   implementation(libs.androidx.compose.runtime)
   implementation(libs.androidx.datastore.preferences)

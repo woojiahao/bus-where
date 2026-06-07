@@ -8,6 +8,7 @@ import com.woojiahao.buswhere.data.api.BusWhereApiDataSource
 import com.woojiahao.buswhere.data.api.dtos.BusWhereApiRouteDto
 import com.woojiahao.buswhere.data.api.dtos.BusWhereApiServiceDto
 import com.woojiahao.buswhere.data.api.dtos.BusWhereApiStopDto
+import com.woojiahao.buswhere.models.Arrival
 import com.woojiahao.buswhere.models.Bundle
 import com.woojiahao.buswhere.models.Service
 import com.woojiahao.buswhere.models.Stop
@@ -16,9 +17,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import okio.IOException
 
 class BusWhereRepositoryImpl(
   private val apiDataSource: BusWhereApiDataSource,
@@ -50,7 +51,7 @@ class BusWhereRepositoryImpl(
         )
         BusWhereDataState.Success(bundle)
       }
-    } catch (e: IOException) {
+    } catch (e: Exception) {
       BusWhereDataState.Error
     }
   }
@@ -60,6 +61,33 @@ class BusWhereRepositoryImpl(
       val current = prefs[FAV_KEY]?.mapNotNull { it.toIntOrNull() }?.toSet() ?: emptySet()
       val updated = if (busStopCode in current) current - busStopCode else current + busStopCode
       prefs[FAV_KEY] = updated.map { it.toString() }.toSet()
+    }
+  }
+
+  override suspend fun getArrivals(busStopCode: Int): Flow<BusWhereArrivalState> = flow {
+    emit(BusWhereArrivalState.Loading)
+    try {
+      val apiArrivals = withContext(Dispatchers.IO) { apiDataSource.getArrivals(busStopCode) }
+      val arrivals = apiArrivals.map { (serviceNo, nextBus1, nextBus2, nextBus3) ->
+        Arrival(
+          serviceNo = serviceNo,
+          nextBus1 = Arrival.Bus(
+            load = nextBus1.load,
+            estimatedArrival = nextBus1.estimatedArrival
+          ),
+          nextBus2 = Arrival.Bus(
+            load = nextBus2.load,
+            estimatedArrival = nextBus2.estimatedArrival
+          ),
+          nextBus3 = Arrival.Bus(
+            load = nextBus3.load,
+            estimatedArrival = nextBus3.estimatedArrival
+          ),
+        )
+      }
+      emit(BusWhereArrivalState.Success(arrivals))
+    } catch (e: Exception) {
+      emit(BusWhereArrivalState.Error)
     }
   }
 

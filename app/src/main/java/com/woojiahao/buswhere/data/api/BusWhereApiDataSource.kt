@@ -1,5 +1,6 @@
 package com.woojiahao.buswhere.data.api
 
+import com.woojiahao.buswhere.data.api.dtos.BusWhereApiArrivalDto
 import com.woojiahao.buswhere.data.api.dtos.BusWhereApiRouteDto
 import com.woojiahao.buswhere.data.api.dtos.BusWhereApiServiceDto
 import com.woojiahao.buswhere.data.api.dtos.BusWhereApiStopDto
@@ -24,10 +25,10 @@ interface BusWhereApiDataSource {
   @GET("api/bus/arrival")
   suspend fun getArrival(
     @Query("bus_stop_code") busStopCode: Int, @Query("service_code") serviceCode: String
-  ): String
+  ): List<BusWhereApiArrivalDto>
 
   @GET("api/bus/arrival")
-  suspend fun getArrival(@Query("bus_stop_code") busStopCode: Int): String
+  suspend fun getArrivals(@Query("bus_stop_code") busStopCode: Int): List<BusWhereApiArrivalDto>
 }
 
 object BusWhereApi {
