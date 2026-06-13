@@ -3,9 +3,12 @@ package com.woojiahao.buswhere.ui.widgets.busarrivalcard
 import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -17,8 +20,6 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.woojiahao.buswhere.ui.screens.BusWhereScreen
 import com.woojiahao.buswhere.viewmodel.BusWhereViewModel
 import com.woojiahao.buswhere.viewmodel.BusWhereViewModelFactory
@@ -32,6 +33,7 @@ class BusArrivalCardConfigActivity : ComponentActivity() {
     val SELECTED_SERVICE_NO = stringPreferencesKey("widget_service_no")
   }
 
+  @RequiresApi(Build.VERSION_CODES.O)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -68,10 +70,8 @@ class BusArrivalCardConfigActivity : ComponentActivity() {
                 }
               }
 
+              Log.i("woojiahao:logs", "config runner for glance $glanceId and updating")
               BusArrivalCard().update(context, glanceId)
-
-              val immediateWorkRequest = OneTimeWorkRequestBuilder<BusArrivalCardUpdateWorker>().build()
-              WorkManager.getInstance(context).enqueue(immediateWorkRequest)
 
               val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
               setResult(Activity.RESULT_OK, resultValue)
@@ -82,6 +82,4 @@ class BusArrivalCardConfigActivity : ComponentActivity() {
       }
     }
   }
-
-//  private fun runSetupPipeline(selection: String, )
 }

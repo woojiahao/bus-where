@@ -1,47 +1,52 @@
 package com.woojiahao.buswhere.ui.widgets.busarrivalcard
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.glance.appwidget.GlanceAppWidgetManager
-import androidx.glance.appwidget.state.getAppWidgetState
 import androidx.glance.appwidget.updateAll
-import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import com.woojiahao.buswhere.data.api.BusWhereApi
-import com.woojiahao.buswhere.data.widget.saveStopService
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.toJavaDuration
 
 class BusArrivalCardUpdateWorker(private val context: Context, workerParams: WorkerParameters) :
   CoroutineWorker(context, workerParams) {
   override suspend fun doWork(): Result {
     return try {
-      val apiDataSource = BusWhereApi.retrofitService
-
-      val manager = GlanceAppWidgetManager(context)
-      val glanceIds = manager.getGlanceIds(BusArrivalCard::class.java)
-
-      for (glanceId in glanceIds) {
-        val prefs = getAppWidgetState(context, PreferencesGlanceStateDefinition, glanceId)
-        val selectedBusStopCode =
-          prefs[BusArrivalCardConfigActivity.SELECTED_BUS_STOP_CODE_KEY] ?: 0
-        val selectedServiceNo = prefs[BusArrivalCardConfigActivity.SELECTED_SERVICE_NO] ?: ""
-        Log.i(
-          "local",
-          "selected bus stop code: $selectedBusStopCode; selected service no: $selectedServiceNo"
-        )
-        val freshData =
-          apiDataSource.getArrival(selectedBusStopCode, selectedServiceNo).map { it.toModel() }
-        Log.i(
-          "local",
-          "fresh data length: ${freshData.size}"
-        )
-        context.saveStopService(selectedBusStopCode, selectedServiceNo, freshData)
-      }
-
+      Log.i("woojiahao:logs", "bus arrival card update worker triggered")
+      val ids = GlanceAppWidgetManager(applicationContext).getGlanceIds(BusArrivalCard::class.java)
+      Log.i("woojiahao:logs", "widget ids = $ids")
+      // This worker just needs to trigger an update to the widgets since the widget loads the data
+      // from the repository directly
       BusArrivalCard().updateAll(context)
       Result.success()
     } catch (e: Exception) {
       Result.retry()
+    }
+  }
+
+  companion object {
+    private const val UNIQUE_WORKER_NAME = "busArrivalCardUpdateWorker"
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun schedule(context: Context) {
+      WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        UNIQUE_WORKER_NAME,
+        ExistingPeriodicWorkPolicy.KEEP,
+        PeriodicWorkRequest.Builder(
+          BusArrivalCardUpdateWorker::class.java,
+          15.minutes.toJavaDuration()
+        ).setInitialDelay(15.minutes.toJavaDuration()).build(),
+      )
+    }
+
+    fun cancel(context: Context) {
+      WorkManager.getInstance(context).cancelUniqueWork(UNIQUE_WORKER_NAME)
     }
   }
 }
