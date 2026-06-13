@@ -36,7 +36,11 @@ android {
   buildFeatures {
     compose = true
   }
+  composeOptions {
+    kotlinCompilerExtensionVersion = "1.5.15"
+  }
 }
+
 
 dependencies {
   implementation(libs.androidx.core.ktx)
@@ -60,6 +64,11 @@ dependencies {
   implementation(libs.androidx.compose.runtime)
   implementation(libs.androidx.datastore.preferences)
   implementation(libs.androidx.compose.material.icons.extended)
+  implementation(libs.androidx.work.runtime.ktx)
+
+  implementation(libs.androidx.glance.appwidget)
+  implementation(libs.androidx.glance.material3)
+  implementation(libs.androidx.glance.material)
 
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)

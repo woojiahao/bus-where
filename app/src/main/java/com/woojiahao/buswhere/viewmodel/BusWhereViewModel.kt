@@ -2,6 +2,7 @@ package com.woojiahao.buswhere.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.woojiahao.buswhere.models.Service
 import com.woojiahao.buswhere.models.Stop
 import com.woojiahao.buswhere.models.search
 import com.woojiahao.buswhere.repository.BusWhereArrivalState
@@ -19,6 +20,7 @@ data class BusWhereUiState(
   val dataState: BusWhereDataState = BusWhereDataState.Loading,
   val filteredFavorites: List<Stop> = emptyList(),
   val filteredOthers: List<Stop> = emptyList(),
+  val stopServices: Map<Int, List<Service>> = emptyMap(),
   val arrivalState: BusWhereArrivalState = BusWhereArrivalState.Idle,
   val searchQuery: String = ""
 )
@@ -32,12 +34,19 @@ class BusWhereViewModel(private val repository: BusWhereRepository) : ViewModel(
   ) { dataState, favStops, query, arrivalState ->
     val q = query.trim().lowercase()
     val stops = (dataState as? BusWhereDataState.Success)?.bundle?.stops ?: emptyList()
+    val services = (dataState as? BusWhereDataState.Success)?.bundle?.services ?: emptyList()
+
     val (favStops, otherStops) = stops.partition { it.busStopCode in favStops }
+
+    val stopServices = services
+      .flatMap { it.stops.map { stop -> stop.busStopCode to it } }
+      .groupBy(keySelector = { it.first }, valueTransform = { it.second })
 
     BusWhereUiState(
       dataState = dataState,
       filteredFavorites = favStops.search(q),
       filteredOthers = otherStops.search(q),
+      stopServices = stopServices,
       arrivalState = arrivalState,
       searchQuery = query
     )

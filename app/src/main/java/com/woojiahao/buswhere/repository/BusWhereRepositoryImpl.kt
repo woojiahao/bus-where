@@ -8,7 +8,6 @@ import com.woojiahao.buswhere.data.api.BusWhereApiDataSource
 import com.woojiahao.buswhere.data.api.dtos.BusWhereApiRouteDto
 import com.woojiahao.buswhere.data.api.dtos.BusWhereApiServiceDto
 import com.woojiahao.buswhere.data.api.dtos.BusWhereApiStopDto
-import com.woojiahao.buswhere.models.Arrival
 import com.woojiahao.buswhere.models.Bundle
 import com.woojiahao.buswhere.models.Service
 import com.woojiahao.buswhere.models.Stop
@@ -21,11 +20,12 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
+private val Context.favoritesDataStore by preferencesDataStore(name = "favorites")
+
 class BusWhereRepositoryImpl(
   private val apiDataSource: BusWhereApiDataSource,
   private val context: Context
 ) : BusWhereRepository {
-  private val Context.dataStore by preferencesDataStore(name = "favorites")
   private val FAV_KEY = stringSetPreferencesKey("favorite_bus_stop_codes")
 
   private val _bundle = MutableStateFlow<BusWhereDataState>(BusWhereDataState.Loading)
@@ -33,7 +33,7 @@ class BusWhereRepositoryImpl(
     get() = _bundle.asStateFlow()
 
   override val favoriteStops: Flow<Set<Int>>
-    get() = context.dataStore.data.map {
+    get() = context.favoritesDataStore.data.map {
       it[FAV_KEY]?.mapNotNull { t -> t.toIntOrNull() }?.toSet() ?: emptySet()
     }
 
@@ -57,7 +57,7 @@ class BusWhereRepositoryImpl(
   }
 
   override suspend fun toggleFavorite(busStopCode: Int) {
-    context.dataStore.edit { prefs ->
+    context.favoritesDataStore.edit { prefs ->
       val current = prefs[FAV_KEY]?.mapNotNull { it.toIntOrNull() }?.toSet() ?: emptySet()
       val updated = if (busStopCode in current) current - busStopCode else current + busStopCode
       prefs[FAV_KEY] = updated.map { it.toString() }.toSet()
@@ -68,23 +68,22 @@ class BusWhereRepositoryImpl(
     emit(BusWhereArrivalState.Loading)
     try {
       val apiArrivals = withContext(Dispatchers.IO) { apiDataSource.getArrivals(busStopCode) }
-      val arrivals = apiArrivals.map { (serviceNo, nextBus1, nextBus2, nextBus3) ->
-        Arrival(
-          serviceNo = serviceNo,
-          nextBus1 = Arrival.Bus(
-            load = nextBus1.load,
-            estimatedArrival = nextBus1.estimatedArrival
-          ),
-          nextBus2 = Arrival.Bus(
-            load = nextBus2.load,
-            estimatedArrival = nextBus2.estimatedArrival
-          ),
-          nextBus3 = Arrival.Bus(
-            load = nextBus3.load,
-            estimatedArrival = nextBus3.estimatedArrival
-          ),
-        )
-      }
+      val arrivals = apiArrivals.map { it.toModel() }
+      emit(BusWhereArrivalState.Success(arrivals))
+    } catch (e: Exception) {
+      emit(BusWhereArrivalState.Error)
+    }
+  }
+
+  override suspend fun getArrivals(
+    busStopCode: Int,
+    serviceNo: String
+  ): Flow<BusWhereArrivalState> = flow {
+    emit(BusWhereArrivalState.Loading)
+    try {
+      val apiArrivals =
+        withContext(Dispatchers.IO) { apiDataSource.getArrival(busStopCode, serviceNo) }
+      val arrivals = apiArrivals.map { it.toModel() }
       emit(BusWhereArrivalState.Success(arrivals))
     } catch (e: Exception) {
       emit(BusWhereArrivalState.Error)

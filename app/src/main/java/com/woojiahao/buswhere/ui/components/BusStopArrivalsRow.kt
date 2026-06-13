@@ -31,7 +31,7 @@ import com.woojiahao.buswhere.models.Stop
 import com.woojiahao.buswhere.repository.BusWhereArrivalState
 
 @Composable
-fun BusStopRow(
+fun BusStopArrivalsRow(
   stop: Stop,
   isExpanded: Boolean,
   isFavorite: Boolean,

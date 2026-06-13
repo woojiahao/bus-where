@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.woojiahao.buswhere.models.Service
+import com.woojiahao.buswhere.models.Stop
 import com.woojiahao.buswhere.repository.BusWhereDataState
 import com.woojiahao.buswhere.ui.components.BusStopList
 import com.woojiahao.buswhere.ui.components.BusStopSearchBar
@@ -19,9 +21,11 @@ import com.woojiahao.buswhere.viewmodel.BusWhereViewModel
 
 @Preview()
 @Composable
-fun HomeScreen(
+fun BusWhereScreen(
   modifier: Modifier = Modifier,
-  vm: BusWhereViewModel = viewModel()
+  vm: BusWhereViewModel = viewModel(),
+  isWidgetConfigMode: Boolean = false,
+  onSelectService: (service: Service, stop: Stop) -> Unit = { service, stop -> }
 ) {
   val state by vm.uiState.collectAsStateWithLifecycle()
 
@@ -44,9 +48,12 @@ fun HomeScreen(
       is BusWhereDataState.Success -> BusStopList(
         filteredFavorites = state.filteredFavorites,
         filteredOthers = state.filteredOthers,
+        stopServices = state.stopServices,
         arrivalState = state.arrivalState,
         onToggleFavorite = vm::toggleFavorite,
-        onFetchArrivals = vm::fetchArrivals
+        onFetchArrivals = vm::fetchArrivals,
+        onSelectService = onSelectService,
+        isWidgetConfigMode = isWidgetConfigMode
       )
     }
   }

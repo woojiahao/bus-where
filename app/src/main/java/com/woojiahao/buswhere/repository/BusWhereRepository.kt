@@ -23,4 +23,5 @@ interface BusWhereRepository {
   suspend fun refresh()
   suspend fun toggleFavorite(busStopCode: Int)
   suspend fun getArrivals(busStopCode: Int): Flow<BusWhereArrivalState>
+  suspend fun getArrivals(busStopCode: Int, serviceNo: String): Flow<BusWhereArrivalState>
 }
