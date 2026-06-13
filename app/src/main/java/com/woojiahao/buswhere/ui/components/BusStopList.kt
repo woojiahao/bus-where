@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.woojiahao.buswhere.models.Service
 import com.woojiahao.buswhere.models.Stop
 import com.woojiahao.buswhere.repository.BusWhereArrivalState
 
@@ -23,9 +24,12 @@ import com.woojiahao.buswhere.repository.BusWhereArrivalState
 fun BusStopList(
   filteredFavorites: List<Stop>,
   filteredOthers: List<Stop>,
+  stopServices: Map<Int, List<Service>>,
   arrivalState: BusWhereArrivalState,
   onToggleFavorite: (stop: Stop) -> Unit,
   onFetchArrivals: (busStopCode: Int) -> Unit,
+  onSelectService: (service: Service, stop: Stop) -> Unit,
+  isWidgetConfigMode: Boolean = false,
   modifier: Modifier = Modifier
 ) {
   var expandedStopCode by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -47,19 +51,36 @@ fun BusStopList(
         items = filteredFavorites,
         key = { _, stop -> "fav_${stop.busStopCode}" }
       ) { index, stop ->
-        BusStopRow(
-          stop = stop,
-          isExpanded = expandedStopCode == stop.busStopCode,
-          isFavorite = true,
-          showDivider = index < filteredFavorites.lastIndex,
-          arrivalState = arrivalState,
-          onToggleFavorite = onToggleFavorite,
-          onToggleExpand = {
-            expandedStopCode = if (expandedStopCode == stop.busStopCode) null else stop.busStopCode
-          },
-          onFetchArrivals = onFetchArrivals,
-          modifier = Modifier.animateItem(),
-        )
+        if (isWidgetConfigMode && stopServices[stop.busStopCode] != null) {
+          BusStopWidgetSelectionRow(
+            stop = stop,
+            stopServices = stopServices[stop.busStopCode]!!,
+            isExpanded = expandedStopCode == stop.busStopCode,
+            isFavorite = true,
+            showDivider = index < filteredFavorites.lastIndex,
+            onToggleExpand = {
+              expandedStopCode =
+                if (expandedStopCode == stop.busStopCode) null else stop.busStopCode
+            },
+            onSelectService = { service -> onSelectService(service, stop) },
+            modifier = Modifier.animateItem(),
+          )
+        } else {
+          BusStopArrivalsRow(
+            stop = stop,
+            isExpanded = expandedStopCode == stop.busStopCode,
+            isFavorite = true,
+            showDivider = index < filteredFavorites.lastIndex,
+            arrivalState = arrivalState,
+            onToggleFavorite = onToggleFavorite,
+            onToggleExpand = {
+              expandedStopCode =
+                if (expandedStopCode == stop.busStopCode) null else stop.busStopCode
+            },
+            onFetchArrivals = onFetchArrivals,
+            modifier = Modifier.animateItem(),
+          )
+        }
       }
     }
 
@@ -79,19 +100,36 @@ fun BusStopList(
         items = filteredOthers,
         key = { _, stop -> "stop_${stop.busStopCode}" }
       ) { index, stop ->
-        BusStopRow(
-          stop = stop,
-          isExpanded = expandedStopCode == stop.busStopCode,
-          isFavorite = true,
-          showDivider = index < filteredOthers.lastIndex,
-          arrivalState = arrivalState,
-          onToggleFavorite = onToggleFavorite,
-          onToggleExpand = {
-            expandedStopCode = if (expandedStopCode == stop.busStopCode) null else stop.busStopCode
-          },
-          onFetchArrivals = onFetchArrivals,
-          modifier = Modifier.animateItem()
-        )
+        if (isWidgetConfigMode && stopServices[stop.busStopCode] != null) {
+          BusStopWidgetSelectionRow(
+            stop = stop,
+            stopServices = stopServices[stop.busStopCode]!!,
+            isExpanded = expandedStopCode == stop.busStopCode,
+            isFavorite = false,
+            showDivider = index < filteredFavorites.lastIndex,
+            onToggleExpand = {
+              expandedStopCode =
+                if (expandedStopCode == stop.busStopCode) null else stop.busStopCode
+            },
+            onSelectService = { service -> onSelectService(service, stop) },
+            modifier = Modifier.animateItem(),
+          )
+        } else {
+          BusStopArrivalsRow(
+            stop = stop,
+            isExpanded = expandedStopCode == stop.busStopCode,
+            isFavorite = false,
+            showDivider = index < filteredOthers.lastIndex,
+            arrivalState = arrivalState,
+            onToggleFavorite = onToggleFavorite,
+            onToggleExpand = {
+              expandedStopCode =
+                if (expandedStopCode == stop.busStopCode) null else stop.busStopCode
+            },
+            onFetchArrivals = onFetchArrivals,
+            modifier = Modifier.animateItem()
+          )
+        }
       }
     }
   }
