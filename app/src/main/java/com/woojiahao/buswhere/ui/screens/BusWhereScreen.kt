@@ -25,7 +25,7 @@ fun BusWhereScreen(
   modifier: Modifier = Modifier,
   vm: BusWhereViewModel = viewModel(),
   isWidgetConfigMode: Boolean = false,
-  onSelectService: (service: Service, stop: Stop) -> Unit = { service, stop -> }
+  onSelectService: (service: Service, stop: Stop) -> Unit = { _, _ -> }
 ) {
   val state by vm.uiState.collectAsStateWithLifecycle()
 
