@@ -24,17 +24,20 @@ import com.woojiahao.buswhere.viewmodel.BusWhereViewModel
 fun BusWhereScreen(
   modifier: Modifier = Modifier,
   vm: BusWhereViewModel = viewModel(),
+  showSearchBar: Boolean = false,
   isWidgetConfigMode: Boolean = false,
   onSelectService: (service: Service, stop: Stop) -> Unit = { _, _ -> }
 ) {
   val state by vm.uiState.collectAsStateWithLifecycle()
 
   Column(modifier = modifier.fillMaxSize()) {
-    BusStopSearchBar(
-      query = state.searchQuery,
-      onQueryChange = vm::onSearchChange,
-      enabled = state.dataState is BusWhereDataState.Success,
-    )
+    if (showSearchBar) {
+      BusStopSearchBar(
+        query = state.searchQuery,
+        onQueryChange = vm::onSearchChange,
+        enabled = state.dataState is BusWhereDataState.Success,
+      )
+    }
 
     when (state.dataState) {
       BusWhereDataState.Error -> ErrorState(onRetry = vm::refresh)
