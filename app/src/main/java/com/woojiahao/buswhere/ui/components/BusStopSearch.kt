@@ -20,6 +20,8 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
+import com.woojiahao.buswhere.ui.theme.OnSurface
+import com.woojiahao.buswhere.ui.theme.SurfaceContainer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +41,9 @@ fun BusStopSearchBar(
         .padding(horizontal = 16.dp, vertical = 0.dp)
         .align(Alignment.TopCenter)
         .semantics { traversalIndex = 0f },
+      colors = SearchBarDefaults.colors(
+        containerColor = SurfaceContainer,
+      ),
       inputField = {
         SearchBarDefaults.InputField(
           query = query,
@@ -48,6 +53,10 @@ fun BusStopSearchBar(
           onExpandedChange = { /* keep collapsed — results are below */ },
           enabled = enabled,
           placeholder = { Text("Enter name, roadname or code") },
+          colors = SearchBarDefaults.inputFieldColors(
+            focusedTextColor = OnSurface,
+            unfocusedTextColor = OnSurface,
+          ),
           leadingIcon = {
             Icon(Icons.Default.Search, contentDescription = null)
           },

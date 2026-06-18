@@ -1,8 +1,10 @@
 package com.woojiahao.buswhere.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -26,6 +28,10 @@ fun BusStopList(
   filteredOthers: List<Stop>,
   stopServices: Map<Int, List<Service>>,
   arrivalState: BusWhereArrivalState,
+  showSearchBar: Boolean,
+  searchBarEnabled: Boolean,
+  searchQuery: String,
+  onSearchChange: (search: String) -> Unit,
   onToggleFavorite: (stop: Stop) -> Unit,
   onFetchArrivals: (busStopCode: Int) -> Unit,
   onSelectService: (service: Service, stop: Stop) -> Unit,
@@ -38,6 +44,18 @@ fun BusStopList(
     modifier = Modifier.fillMaxSize(),
     contentPadding = PaddingValues(bottom = 16.dp)
   ) {
+    if (showSearchBar) {
+      stickyHeader {
+        Box(modifier = Modifier.padding(bottom = 24.dp)) {
+          BusStopSearchBar(
+            query = searchQuery,
+            onQueryChange = onSearchChange,
+            enabled = searchBarEnabled
+          )
+        }
+      }
+    }
+
     if (filteredFavorites.isNotEmpty()) {
       item {
         SectionHeader(
@@ -82,10 +100,12 @@ fun BusStopList(
     }
 
     item {
-      SectionHeader(
-        title = if (filteredOthers.isEmpty()) "All" else "Others",
-        icon = Icons.Default.LocationOn,
-      )
+      Box(modifier = Modifier.padding(top = 24.dp)) {
+        SectionHeader(
+          title = if (filteredOthers.isEmpty()) "All" else "Others",
+          icon = Icons.Default.LocationOn,
+        )
+      }
     }
 
     if (isEmpty) {

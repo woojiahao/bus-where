@@ -15,7 +15,6 @@ import com.woojiahao.buswhere.models.Service
 import com.woojiahao.buswhere.models.Stop
 import com.woojiahao.buswhere.repository.BusWhereDataState
 import com.woojiahao.buswhere.ui.components.BusStopList
-import com.woojiahao.buswhere.ui.components.BusStopSearchBar
 import com.woojiahao.buswhere.ui.components.ErrorState
 import com.woojiahao.buswhere.viewmodel.BusWhereViewModel
 
@@ -31,14 +30,6 @@ fun BusWhereScreen(
   val state by vm.uiState.collectAsStateWithLifecycle()
 
   Column(modifier = modifier.fillMaxSize()) {
-    if (showSearchBar) {
-      BusStopSearchBar(
-        query = state.searchQuery,
-        onQueryChange = vm::onSearchChange,
-        enabled = state.dataState is BusWhereDataState.Success,
-      )
-    }
-
     when (state.dataState) {
       BusWhereDataState.Error -> ErrorState(onRetry = vm::refresh)
       BusWhereDataState.Loading -> Box(
@@ -53,6 +44,10 @@ fun BusWhereScreen(
         filteredOthers = state.filteredOthers,
         stopServices = state.stopServices,
         arrivalState = state.arrivalState,
+        searchBarEnabled = true,
+        showSearchBar = showSearchBar,
+        searchQuery = state.searchQuery,
+        onSearchChange = vm::onSearchChange,
         onToggleFavorite = vm::toggleFavorite,
         onFetchArrivals = vm::fetchArrivals,
         onSelectService = onSelectService,
