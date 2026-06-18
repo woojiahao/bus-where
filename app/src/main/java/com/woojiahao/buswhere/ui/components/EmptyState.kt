@@ -27,13 +27,11 @@ fun EmptyState(modifier: Modifier = Modifier) {
     Icon(
       imageVector = Icons.Default.Search,
       contentDescription = null,
-      tint = MaterialTheme.colorScheme.onSurfaceVariant,
       modifier = modifier.size(48.dp)
     )
     Text(
       text = "No stops found",
       style = MaterialTheme.typography.bodyLarge,
-      color = MaterialTheme.colorScheme.onSurfaceVariant
     )
   }
 }

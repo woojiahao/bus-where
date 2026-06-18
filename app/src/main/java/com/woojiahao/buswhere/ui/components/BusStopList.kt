@@ -30,17 +30,16 @@ fun BusStopList(
   onFetchArrivals: (busStopCode: Int) -> Unit,
   onSelectService: (service: Service, stop: Stop) -> Unit,
   isWidgetConfigMode: Boolean = false,
-  modifier: Modifier = Modifier
 ) {
   var expandedStopCode by rememberSaveable { mutableStateOf<Int?>(null) }
   val isEmpty = filteredFavorites.isEmpty() && filteredOthers.isEmpty()
 
   LazyColumn(
-    modifier = modifier.fillMaxSize(),
+    modifier = Modifier.fillMaxSize(),
     contentPadding = PaddingValues(bottom = 16.dp)
   ) {
     if (filteredFavorites.isNotEmpty()) {
-      stickyHeader(key = "header_favorites") {
+      item {
         SectionHeader(
           title = "Favorites",
           icon = Icons.Default.Star,
@@ -84,7 +83,7 @@ fun BusStopList(
       }
     }
 
-    stickyHeader(key = "header_all") {
+    item {
       SectionHeader(
         title = if (filteredOthers.isEmpty()) "All" else "Others",
         icon = Icons.Default.LocationOn,
