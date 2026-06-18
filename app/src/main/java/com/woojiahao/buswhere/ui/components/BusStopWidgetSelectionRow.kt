@@ -8,29 +8,33 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsBus
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.woojiahao.buswhere.models.Service
 import com.woojiahao.buswhere.models.Stop
+import com.woojiahao.buswhere.ui.theme.SecondaryContainer
 
 @Composable
 fun BusStopWidgetSelectionRow(
@@ -38,7 +42,6 @@ fun BusStopWidgetSelectionRow(
   stopServices: List<Service>,
   isExpanded: Boolean,
   isFavorite: Boolean,
-  showDivider: Boolean,
   onToggleExpand: () -> Unit,
   onSelectService: (service: Service) -> Unit,
   modifier: Modifier = Modifier
@@ -48,35 +51,36 @@ fun BusStopWidgetSelectionRow(
     label = "star_tint"
   )
 
-  ListItem(
-    modifier = modifier.clickable { onToggleExpand() },
-    headlineContent = { Text(stop.description) },
-    supportingContent = { Text("${stop.busStopCode} | ${stop.roadName}") },
-    leadingContent = {
-      Icon(
-        imageVector = Icons.Default.DirectionsBus,
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.onSurfaceVariant
-      )
-    },
-    trailingContent = {
-      Row(
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        Icon(
-          imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-          contentDescription = if (isExpanded) "Collapse" else "Expand",
-          tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+  Box(
+    modifier = modifier
+      .padding(16.dp, 2.dp)
+      .clip(RoundedCornerShape(15.dp))
+  ) {
+    ListItem(
+      modifier = modifier
+        .clickable { onToggleExpand() },
+      headlineContent = { Text(stop.description) },
+      supportingContent = { Text("${stop.busStopCode} | ${stop.roadName}") },
+      colors = ListItemDefaults.colors(SecondaryContainer),
+      trailingContent = {
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+          Icon(
+            imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+            contentDescription = if (isExpanded) "Collapse" else "Expand",
+          )
 
-        Icon(
-          imageVector = if (isFavorite) Icons.Default.Star else Icons.Outlined.Star,
-          contentDescription = null,
-          tint = starTint,
-        )
+          Icon(
+            imageVector = if (isFavorite) Icons.Default.Star else Icons.Outlined.Star,
+            contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+            tint = starTint
+          )
+        }
       }
-    }
-  )
+    )
+  }
 
   AnimatedVisibility(
     visible = isExpanded,
@@ -112,9 +116,5 @@ fun BusStopWidgetSelectionRow(
         }
       }
     }
-  }
-
-  if (showDivider) {
-    HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
   }
 }

@@ -56,7 +56,6 @@ fun BusStopList(
             stopServices = stopServices[stop.busStopCode]!!,
             isExpanded = expandedStopCode == stop.busStopCode,
             isFavorite = true,
-            showDivider = index < filteredFavorites.lastIndex,
             onToggleExpand = {
               expandedStopCode =
                 if (expandedStopCode == stop.busStopCode) null else stop.busStopCode
@@ -69,7 +68,6 @@ fun BusStopList(
             stop = stop,
             isExpanded = expandedStopCode == stop.busStopCode,
             isFavorite = true,
-            showDivider = index < filteredFavorites.lastIndex,
             arrivalState = arrivalState,
             onToggleFavorite = onToggleFavorite,
             onToggleExpand = {
@@ -105,7 +103,6 @@ fun BusStopList(
             stopServices = stopServices[stop.busStopCode]!!,
             isExpanded = expandedStopCode == stop.busStopCode,
             isFavorite = false,
-            showDivider = index < filteredFavorites.lastIndex,
             onToggleExpand = {
               expandedStopCode =
                 if (expandedStopCode == stop.busStopCode) null else stop.busStopCode
@@ -118,7 +115,6 @@ fun BusStopList(
             stop = stop,
             isExpanded = expandedStopCode == stop.busStopCode,
             isFavorite = false,
-            showDivider = index < filteredOthers.lastIndex,
             arrivalState = arrivalState,
             onToggleFavorite = onToggleFavorite,
             onToggleExpand = {

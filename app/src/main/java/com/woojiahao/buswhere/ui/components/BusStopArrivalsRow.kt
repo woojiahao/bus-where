@@ -39,7 +39,6 @@ fun BusStopArrivalsRow(
   stop: Stop,
   isExpanded: Boolean,
   isFavorite: Boolean,
-  showDivider: Boolean,
   arrivalState: BusWhereArrivalState,
   onToggleFavorite: (stop: Stop) -> Unit,
   onToggleExpand: () -> Unit,
@@ -99,8 +98,4 @@ fun BusStopArrivalsRow(
       onRetry = { onFetchArrivals(stop.busStopCode) },
     )
   }
-
-//  if (showDivider) {
-//    HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
-//  }
 }
